@@ -2197,6 +2197,7 @@ class KmipEngine(object):
         # TODO: Need to complete the filtering logic based on all given
         # objects in payload.
         self._logger.info("Processing operation: Locate")
+        self._id_placeholder = None
 
         managed_objects = self._list_objects_with_access_controls(
                                 enums.Operation.LOCATE)
@@ -2433,6 +2434,9 @@ class KmipEngine(object):
                         )
                     )
                     managed_objects_filtered.append(managed_object)
+                    self._id_placeholder = str(managed_object.unique_identifier)
+                    if payload.maximum_items == len(managed_objects_filtered):
+                        break
 
             managed_objects = managed_objects_filtered
 
@@ -2926,11 +2930,11 @@ class KmipEngine(object):
         # TODO (peter-hamilton): Check the usage limitations for the key to
         # confirm that it can be used for this operation.
 
-        if managed_object._object_type != enums.ObjectType.SYMMETRIC_KEY:
-            raise exceptions.PermissionDenied(
-                "The requested encryption key is not a symmetric key. "
-                "Only symmetric encryption is currently supported."
-            )
+        # if managed_object._object_type != enums.ObjectType.SYMMETRIC_KEY:
+        #     raise exceptions.PermissionDenied(
+        #         "The requested encryption key is not a symmetric key. "
+        #         "Only symmetric encryption is currently supported."
+        #     )
 
         if managed_object.state != enums.State.ACTIVE:
             raise exceptions.PermissionDenied(
@@ -2992,11 +2996,11 @@ class KmipEngine(object):
         # TODO (peter-hamilton): Check the usage limitations for the key to
         # confirm that it can be used for this operation.
 
-        if managed_object._object_type != enums.ObjectType.SYMMETRIC_KEY:
-            raise exceptions.PermissionDenied(
-                "The requested decryption key is not a symmetric key. "
-                "Only symmetric decryption is currently supported."
-            )
+        # if managed_object._object_type != enums.ObjectType.SYMMETRIC_KEY:
+        #     raise exceptions.PermissionDenied(
+        #         "The requested decryption key is not a symmetric key. "
+        #         "Only symmetric decryption is currently supported."
+        #     )
 
         if managed_object.state != enums.State.ACTIVE:
             raise exceptions.PermissionDenied(
